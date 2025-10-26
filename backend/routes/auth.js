@@ -1,15 +1,63 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const { StreamChat } = require('stream-chat');
 const User = require('../models/User');
 const { authenticateToken } = require('../middleware/auth');
 const config = require('../config');
 
 const router = express.Router();
 
+// Stream Chat configuration
+const STREAM_API_KEY = process.env.STREAM_API_KEY || 'cm6gt9re6pnp';
+const STREAM_SECRET = process.env.STREAM_SECRET || 'fp7npfygectyp8zeu6fhzc5ghbbg5g33sd84x9awcwj87hd69fuv5u5negwnffw9';
+
+// Initialize Stream Chat server client
+const serverClient = StreamChat.getInstance(STREAM_API_KEY, STREAM_SECRET);
+
 // Generate JWT token
 const generateToken = (userId) => {
   return jwt.sign({ userId }, config.JWT_SECRET, { expiresIn: '7d' });
+};
+
+// Create user in Stream Chat
+const createStreamUser = async (user) => {
+  try {
+    const userId = user._id.toString();
+    console.log(`Creating Stream Chat user: ${user.name} with ID: ${userId}`);
+    
+    const userData = {
+      id: userId,
+      name: user.name,
+      email: user.email,
+      image: user.profileImage || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random`,
+      // Add custom fields based on user role
+      ...(user.roles?.includes('vendor') && { 
+        vendorId: userId,
+        isVendor: true,
+        userType: 'vendor'
+      }),
+      ...(user.roles?.includes('ngo') && { 
+        ngoId: userId,
+        isNGO: true,
+        userType: 'ngo'
+      }),
+      ...(user.roles?.includes('customer') && { 
+        customerId: userId,
+        isCustomer: true,
+        userType: 'customer'
+      })
+    };
+    
+    console.log('Stream Chat user data:', userData);
+    
+    const result = await serverClient.upsertUser(userData);
+    console.log(`Stream Chat user created successfully: ${user.name} (${userId})`, result);
+  } catch (error) {
+    console.error('Error creating Stream Chat user:', error);
+    console.error('Error details:', error.response?.data || error.message);
+    // Don't throw error - user creation should continue even if Stream Chat fails
+  }
 };
 
 // @route   POST /api/auth/signup
@@ -58,6 +106,9 @@ router.post('/signup', [
     });
 
     await user.save();
+
+    // Create user in Stream Chat
+    await createStreamUser(user);
 
     // Generate token
     const token = generateToken(user._id);

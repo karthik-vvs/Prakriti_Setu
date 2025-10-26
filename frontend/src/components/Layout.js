@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from './LanguageSelector';
 import { 
   Home, 
   Search, 
@@ -20,6 +22,7 @@ import {
 
 const Layout = () => {
   const { user, logout, hasRole, getPrimaryRole } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,30 +37,30 @@ const Layout = () => {
     
     if (primaryRole === 'customer') {
       return [
-        { path: '/dashboard', label: 'Dashboard', icon: Home },
-        { path: '/search-products', label: 'Search Products', icon: Search },
-        { path: '/find-vendors', label: 'Find Vendors', icon: Store },
-        { path: '/find-ngos', label: 'Find NGOs', icon: Users },
-        { path: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-        { path: '/chat', label: 'Chat', icon: MessageCircle },
+        { path: '/dashboard', label: t('navigation.customerDashboard'), icon: Home },
+        { path: '/search-products', label: t('navigation.searchProducts'), icon: Search },
+        { path: '/find-vendors', label: t('navigation.findVendors'), icon: Store },
+        { path: '/find-ngos', label: t('navigation.findNGOs'), icon: Users },
+        { path: '/leaderboard', label: t('navigation.leaderboard'), icon: Trophy },
+        { path: '/chat', label: t('navigation.chat'), icon: MessageCircle },
       ];
     } else if (primaryRole === 'vendor') {
       return [
-        { path: '/vendor-dashboard', label: 'Dashboard', icon: Home },
-        { path: '/my-products', label: 'My Products', icon: Package },
-        { path: '/add-product', label: 'Add Product', icon: Plus },
-        { path: '/create-donation', label: 'Create Donation', icon: Heart },
-        { path: '/my-donations', label: 'My Donations', icon: Heart },
-        { path: '/my-stats', label: 'My Stats', icon: BarChart3 },
-        { path: '/vendor-chat', label: 'Chat', icon: MessageCircle },
+        { path: '/vendor-dashboard', label: t('navigation.vendorDashboard'), icon: Home },
+        { path: '/my-products', label: t('navigation.myProducts'), icon: Package },
+        { path: '/add-product', label: t('navigation.addProduct'), icon: Plus },
+        { path: '/create-donation', label: t('navigation.createDonation'), icon: Heart },
+        { path: '/my-donations', label: t('navigation.myDonations'), icon: Heart },
+        { path: '/my-stats', label: t('navigation.myStats'), icon: BarChart3 },
+        { path: '/vendor-chat', label: t('navigation.vendorChat'), icon: MessageCircle },
       ];
     } else if (primaryRole === 'ngo') {
       return [
-        { path: '/ngo-dashboard', label: 'Dashboard', icon: Home },
-        { path: '/available-donations', label: 'Available Donations', icon: Package },
-        { path: '/my-requests', label: 'My Requests', icon: Heart },
-        { path: '/donation-history', label: 'Donation History', icon: BarChart3 },
-        { path: '/ngo-leaderboard', label: 'Leaderboard', icon: Trophy },
+        { path: '/ngo-dashboard', label: t('navigation.ngoDashboard'), icon: Home },
+        { path: '/available-donations', label: t('navigation.availableDonations'), icon: Package },
+        { path: '/my-requests', label: t('navigation.myRequests'), icon: Heart },
+        { path: '/donation-history', label: t('navigation.donationHistory'), icon: BarChart3 },
+        { path: '/ngo-leaderboard', label: t('navigation.ngoLeaderboard'), icon: Trophy },
       ];
     }
     
@@ -76,9 +79,9 @@ const Layout = () => {
       <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">E</span>
+            <span className="text-white font-bold text-lg">P</span>
           </div>
-          <span className="text-xl font-bold text-gray-900">EcoEvents</span>
+          <span className="text-xl font-bold text-gray-900">Prakriti Setu</span>
         </div>
       </div>
 
@@ -125,6 +128,11 @@ const Layout = () => {
         })}
       </nav>
 
+      {/* Language Selector */}
+      <div className="px-4 py-2 border-t border-gray-200">
+        <LanguageSelector />
+      </div>
+
       {/* Logout */}
       <div className="p-4 border-t border-gray-200">
         <button
@@ -132,7 +140,7 @@ const Layout = () => {
           className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors duration-200"
         >
           <LogOut className="w-5 h-5" />
-          <span>Logout</span>
+          <span>{t('auth.logout')}</span>
         </button>
       </div>
     </div>
@@ -175,9 +183,9 @@ const Layout = () => {
           
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">E</span>
+              <span className="text-white font-bold text-lg">P</span>
             </div>
-            <span className="text-lg font-bold text-gray-900">EcoEvents</span>
+            <span className="text-lg font-bold text-gray-900">Prakriti Setu</span>
           </div>
 
           <div className="w-10"></div>

@@ -72,6 +72,7 @@ export const donationsAPI = {
   requestDonation: (id) => api.post(`/donations/${id}/request`),
   confirmDonation: (id) => api.post(`/donations/${id}/confirm`),
   completeDonation: (id, data) => api.post(`/donations/${id}/complete`, data),
+  ngoCompleteDonation: (id, data) => api.post(`/donations/${id}/ngo-complete`, data),
   getMyDonations: () => api.get('/donations/vendor/my-donations'),
   getMyRequests: () => api.get('/donations/ngo/my-requests'),
 };
@@ -83,6 +84,24 @@ export const usersAPI = {
   getLeaderboard: (params) => api.get('/users/leaderboard', { params }),
   getUser: (id) => api.get(`/users/${id}`),
   getUserStats: (id) => api.get(`/users/${id}/stats`),
+};
+
+// Dashboard API
+export const dashboardAPI = {
+  // Get customer dashboard stats
+  getCustomerStats: () => api.get('/dashboard/customer/stats'),
+  
+  // Get vendor dashboard stats  
+  getVendorStats: () => api.get('/dashboard/vendor/stats'),
+  
+  // Get NGO dashboard stats
+  getNGOStats: () => api.get('/dashboard/ngo/stats'),
+};
+
+// Stream Chat API
+export const streamAPI = {
+  getToken: () => api.post('/stream/token'),
+  createChannel: (channelData) => api.post('/stream/channel', channelData),
 };
 
 // Utility functions

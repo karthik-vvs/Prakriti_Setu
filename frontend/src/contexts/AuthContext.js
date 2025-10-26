@@ -31,12 +31,22 @@ export const AuthProvider = ({ children }) => {
     const checkAuth = async () => {
       if (token) {
         try {
+          // First try to get user from localStorage
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
+          
+          // Then verify with server
           const response = await api.get('/auth/profile');
           setUser(response.data.user);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
         } catch (error) {
           console.error('Auth check failed:', error);
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
           setToken(null);
+          setUser(null);
         }
       }
       setLoading(false);
@@ -51,11 +61,12 @@ export const AuthProvider = ({ children }) => {
       const { token: newToken, user: userData } = response.data;
       
       localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(userData));
       setToken(newToken);
       setUser(userData);
       
       toast.success('Login successful!');
-      return { success: true };
+      return { success: true, user: userData };
     } catch (error) {
       const message = error.response?.data?.message || 'Login failed';
       toast.error(message);
@@ -69,11 +80,12 @@ export const AuthProvider = ({ children }) => {
       const { token: newToken, user: newUser } = response.data;
       
       localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(newUser));
       setToken(newToken);
       setUser(newUser);
       
       toast.success('Account created successfully!');
-      return { success: true };
+      return { success: true, user: newUser };
     } catch (error) {
       const message = error.response?.data?.message || 'Signup failed';
       toast.error(message);
@@ -83,6 +95,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setToken(null);
     setUser(null);
     delete api.defaults.headers.common['Authorization'];
@@ -114,6 +127,21 @@ export const AuthProvider = ({ children }) => {
     return user?.roles?.[0];
   };
 
+  const getDashboardRoute = () => {
+    if (!user) return '/dashboard';
+    
+    const primaryRole = getPrimaryRole();
+    switch (primaryRole) {
+      case 'vendor':
+        return '/vendor-dashboard';
+      case 'ngo':
+        return '/ngo-dashboard';
+      case 'customer':
+      default:
+        return '/dashboard';
+    }
+  };
+
   const value = {
     user,
     token,
@@ -125,6 +153,7 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     hasAnyRole,
     getPrimaryRole,
+    getDashboardRoute,
     isAuthenticated: !!user
   };
 

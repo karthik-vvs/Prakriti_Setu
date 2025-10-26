@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Package, Clock, CheckCircle, XCircle, User, Phone, Mail, MapPin } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, User, Phone, Mail, MapPin, CheckCircle2 } from 'lucide-react';
 import { donationsAPI } from '../../services/api';
-import { getCategoryColor } from '../../utils/helpers';
+import { getCategoryColor, getStatusColor, getStatusText } from '../../utils/helpers';
+import ChatButton from '../../components/ChatButton';
 import toast from 'react-hot-toast';
 
 const MyRequests = () => {
@@ -31,8 +32,10 @@ const MyRequests = () => {
         return <Clock className="w-4 h-4 text-yellow-500" />;
       case 'confirmed':
         return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case 'picked_up':
+        return <Package className="w-4 h-4 text-orange-500" />;
       case 'completed':
-        return <CheckCircle className="w-4 h-4 text-blue-500" />;
+        return <CheckCircle2 className="w-4 h-4 text-purple-500" />;
       case 'expired':
         return <XCircle className="w-4 h-4 text-red-500" />;
       default:
@@ -40,18 +43,14 @@ const MyRequests = () => {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'requested':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'confirmed':
-        return 'bg-green-100 text-green-800';
-      case 'completed':
-        return 'bg-blue-100 text-blue-800';
-      case 'expired':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
+  const handleNgoComplete = async (donationId, ngoNotes = '') => {
+    try {
+      await donationsAPI.ngoCompleteDonation(donationId, { ngoNotes });
+      toast.success('Donation marked as completed successfully!');
+      fetchRequests(); // Refresh the list
+    } catch (error) {
+      console.error('Error completing donation:', error);
+      toast.error('Failed to mark donation as completed');
     }
   };
 
@@ -110,8 +109,12 @@ const MyRequests = () => {
                       alt={request.title}
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        if (e.target) {
+                          e.target.style.display = 'none';
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }
                       }}
                     />
                   ) : (
@@ -131,7 +134,7 @@ const MyRequests = () => {
                     <div className="flex items-center space-x-2">
                       {getStatusIcon(request.status)}
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(request.status)}`}>
-                        {request.status}
+                        {getStatusText(request.status)}
                       </span>
                     </div>
                   </div>
@@ -178,6 +181,17 @@ const MyRequests = () => {
                         <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <span className="text-xs">{request.address}</span>
                       </div>
+                      
+                      {/* Chat with Vendor */}
+                      <div className="pt-2">
+                        <ChatButton
+                          targetUserId={request.vendor._id}
+                          targetUserName={request.vendor.name}
+                          targetUserRole="vendor"
+                          donationId={request._id}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
                   </div>
 
@@ -188,11 +202,56 @@ const MyRequests = () => {
                       {request.confirmedAt && (
                         <p>Confirmed: {new Date(request.confirmedAt).toLocaleString()}</p>
                       )}
+                      {request.pickedUpAt && (
+                        <p>Picked Up: {new Date(request.pickedUpAt).toLocaleString()}</p>
+                      )}
                       {request.completedAt && (
                         <p>Completed: {new Date(request.completedAt).toLocaleString()}</p>
                       )}
                     </div>
                   </div>
+
+                  {/* Action Buttons */}
+                  {request.status === 'picked_up' && (
+                    <div className="pt-3 border-t border-gray-200">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-600">
+                          <p className="font-medium">Ready to confirm completion?</p>
+                          <p className="text-xs">Mark as completed once you've received and verified the donation.</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const notes = prompt('Add any notes about the donation (optional):');
+                            handleNgoComplete(request._id, notes || '');
+                          }}
+                          className="btn-primary flex items-center space-x-2"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>Mark as Completed</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Impact Notes */}
+                  {request.impactNotes && (
+                    <div className="pt-3 border-t border-gray-200">
+                      <div className="text-sm">
+                        <p className="font-medium text-gray-900 mb-1">Vendor Notes:</p>
+                        <p className="text-gray-600">{request.impactNotes}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* NGO Notes */}
+                  {request.ngoNotes && (
+                    <div className="pt-3 border-t border-gray-200">
+                      <div className="text-sm">
+                        <p className="font-medium text-gray-900 mb-1">Your Notes:</p>
+                        <p className="text-gray-600">{request.ngoNotes}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

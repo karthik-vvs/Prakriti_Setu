@@ -35,7 +35,15 @@ const MyStats = () => {
       const totalRequests = donations.filter(d => d.requestedBy).length;
       
       // Find user's rank in leaderboard
-      const userRank = leaderboard.findIndex(vendor => vendor._id === user?._id) + 1;
+      let userRank = leaderboard.findIndex(vendor => vendor._id === user?._id) + 1;
+      
+      // If user not found in leaderboard (score = 0), calculate their rank
+      if (userRank === 0) {
+        const userScore = user?.donationScore || 0;
+        // Count how many vendors have higher scores
+        const higherScoreCount = leaderboard.filter(vendor => vendor.donationScore > userScore).length;
+        userRank = higherScoreCount + 1;
+      }
       
       setStats({
         totalDonations,

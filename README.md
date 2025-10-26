@@ -1,4 +1,4 @@
-# EcoEvents Platform
+# Prakriti Setu
 
 A comprehensive eco-friendly platform connecting Customers, Vendors, and NGOs through location-based matching, product marketplace, and donation system with vendor leaderboard.
 
@@ -41,7 +41,7 @@ A comprehensive eco-friendly platform connecting Customers, Vendors, and NGOs th
 
 1. **Navigate to backend directory**
    ```bash
-   cd ecoevents/backend
+   cd prakriti-setu/backend
    ```
 
 2. **Install dependencies**
@@ -53,7 +53,7 @@ A comprehensive eco-friendly platform connecting Customers, Vendors, and NGOs th
    ```bash
    # Create .env file with your configuration
    PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/ecoevents
+   MONGODB_URI=mongodb://localhost:27017/prakriti-setu
    JWT_SECRET=your_jwt_secret_key_here
    NODE_ENV=development
    ```
@@ -74,7 +74,7 @@ The backend API will be available at `http://localhost:5000`
 
 1. **Navigate to frontend directory**
    ```bash
-   cd ecoevents/frontend
+   cd prakriti-setu/frontend
    ```
 
 2. **Install dependencies**
@@ -92,7 +92,7 @@ The frontend will be available at `http://localhost:3000`
 ## 📁 Project Structure
 
 ```
-ecoevents/
+prakriti-setu/
 ├── backend/
 │   ├── models/          # MongoDB schemas (User, Product, Donation)
 │   ├── routes/          # API routes (auth, products, donations, users)
@@ -320,4 +320,4 @@ For support and questions:
 
 ---
 
-**EcoEvents** - Connecting communities for a sustainable future! 🌱
+**Prakriti Setu** - Connecting communities for a sustainable future! 🌱

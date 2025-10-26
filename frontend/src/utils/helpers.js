@@ -91,6 +91,7 @@ export const getStatusColor = (status) => {
     available: 'bg-green-100 text-green-800',
     requested: 'bg-yellow-100 text-yellow-800',
     confirmed: 'bg-blue-100 text-blue-800',
+    picked_up: 'bg-orange-100 text-orange-800',
     completed: 'bg-purple-100 text-purple-800',
     expired: 'bg-red-100 text-red-800'
   };
@@ -102,6 +103,7 @@ export const getStatusText = (status) => {
     available: 'Available',
     requested: 'Requested',
     confirmed: 'Confirmed',
+    picked_up: 'Picked Up',
     completed: 'Completed',
     expired: 'Expired'
   };

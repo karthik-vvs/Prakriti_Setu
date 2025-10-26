@@ -54,7 +54,7 @@ const donationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['available', 'requested', 'confirmed', 'completed', 'expired'],
+    enum: ['available', 'requested', 'confirmed', 'picked_up', 'completed', 'expired'],
     default: 'available'
   },
   requestedBy: {
@@ -70,6 +70,10 @@ const donationSchema = new mongoose.Schema({
     type: Date,
     default: null
   },
+  pickedUpAt: {
+    type: Date,
+    default: null
+  },
   completedAt: {
     type: Date,
     default: null
@@ -79,6 +83,10 @@ const donationSchema = new mongoose.Schema({
     default: ''
   },
   impactNotes: {
+    type: String,
+    default: ''
+  },
+  ngoNotes: {
     type: String,
     default: ''
   },

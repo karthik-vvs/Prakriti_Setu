@@ -3,6 +3,7 @@ import { Package, MapPin, Clock, User, Heart, Search, Phone, Mail, MessageCircle
 import { useAuth } from '../../contexts/AuthContext';
 import { donationsAPI } from '../../services/api';
 import { getCategoryColor, formatDistance } from '../../utils/helpers';
+import ChatButton from '../../components/ChatButton';
 import toast from 'react-hot-toast';
 
 const AvailableDonations = () => {
@@ -209,8 +210,12 @@ const AvailableDonations = () => {
                       alt={donation.title}
                       className="w-full h-48 object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        if (e.target) {
+                          e.target.style.display = 'none';
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }
                       }}
                     />
                     <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center" style={{display: 'none'}}>
@@ -299,13 +304,13 @@ const AvailableDonations = () => {
                     <span>Request Donation</span>
                   </button>
                   
-                  <button
-                    onClick={() => handleContactVendor(donation)}
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
-                  >
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Contact Vendor</span>
-                  </button>
+                  <ChatButton
+                    targetUserId={donation.vendor._id}
+                    targetUserName={donation.vendor.name}
+                    targetUserRole="vendor"
+                    donationId={donation._id}
+                    className="w-full"
+                  />
                 </div>
               </div>
             </div>

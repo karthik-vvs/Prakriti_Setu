@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Package, 
@@ -12,9 +12,33 @@ import {
   Eye
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { dashboardAPI } from '../../services/api';
 
 const VendorDashboard = () => {
   const { user } = useAuth();
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    activeDonations: 0,
+    donationScore: 0,
+    unreadMessages: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await dashboardAPI.getVendorStats();
+        setStats(response.data.stats);
+      } catch (error) {
+        console.error('Error fetching vendor stats:', error);
+        // Keep default values on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const quickActions = [
     {
@@ -47,28 +71,28 @@ const VendorDashboard = () => {
     }
   ];
 
-  const stats = [
+  const statsData = [
     {
       title: 'Total Products',
-      value: '24',
+      value: loading ? '...' : stats.totalProducts.toString(),
       icon: Package,
       color: 'text-blue-600'
     },
     {
       title: 'Active Donations',
-      value: '8',
+      value: loading ? '...' : stats.activeDonations.toString(),
       icon: Heart,
       color: 'text-red-600'
     },
     {
       title: 'Donation Score',
-      value: user?.donationScore || '0',
+      value: loading ? '...' : stats.donationScore.toString(),
       icon: Star,
       color: 'text-yellow-600'
     },
     {
       title: 'Messages',
-      value: '5',
+      value: loading ? '...' : stats.unreadMessages.toString(),
       icon: MessageCircle,
       color: 'text-green-600'
     }
@@ -88,7 +112,7 @@ const VendorDashboard = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => {
+        {statsData.map((stat, index) => {
           const Icon = stat.icon;
           return (
             <div key={index} className="card">

@@ -3,6 +3,7 @@ import { Users, MapPin, Heart, Phone, Mail, Search, Filter } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext';
 import { usersAPI } from '../../services/api';
 import { formatDistance } from '../../utils/helpers';
+import ChatButton from '../../components/ChatButton';
 import toast from 'react-hot-toast';
 
 const FindNGOs = () => {
@@ -194,25 +195,36 @@ const FindNGOs = () => {
                   )}
                 </div>
 
-                <div className="flex space-x-2 mt-4">
-                  {ngo.phone && (
-                    <button
-                      onClick={() => handleCallNGO(ngo.phone)}
-                      className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center justify-center space-x-1"
-                    >
-                      <Phone className="w-4 h-4" />
-                      <span>Call</span>
-                    </button>
-                  )}
-                  {ngo.email && (
-                    <button
-                      onClick={() => handleEmailNGO(ngo.email)}
-                      className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center space-x-1"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span>Email</span>
-                    </button>
-                  )}
+                <div className="flex flex-col space-y-2 mt-4">
+                  {/* Chat Button - Primary Action */}
+                  <ChatButton
+                    targetUserId={ngo._id}
+                    targetUserName={ngo.name}
+                    targetUserRole="ngo"
+                    className="w-full"
+                  />
+                  
+                  {/* Secondary Actions */}
+                  <div className="flex space-x-2">
+                    {ngo.phone && (
+                      <button
+                        onClick={() => handleCallNGO(ngo.phone)}
+                        className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center justify-center space-x-1"
+                      >
+                        <Phone className="w-4 h-4" />
+                        <span>Call</span>
+                      </button>
+                    )}
+                    {ngo.email && (
+                      <button
+                        onClick={() => handleEmailNGO(ngo.email)}
+                        className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center space-x-1"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Email</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

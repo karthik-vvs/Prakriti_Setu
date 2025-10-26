@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const Login = () => {
@@ -12,16 +13,30 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   
   const { login } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  const from = location.state?.from?.pathname || '/dashboard';
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const getDashboardRoute = (userRoles) => {
+    if (!userRoles || userRoles.length === 0) return '/dashboard';
+    
+    const primaryRole = userRoles[0];
+    switch (primaryRole) {
+      case 'vendor':
+        return '/vendor-dashboard';
+      case 'ngo':
+        return '/ngo-dashboard';
+      case 'customer':
+      default:
+        return '/dashboard';
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -31,7 +46,16 @@ const Login = () => {
     try {
       const result = await login(formData.email, formData.password);
       if (result.success) {
-        navigate(from, { replace: true });
+        // Get the intended destination or default to role-based dashboard
+        const from = location.state?.from?.pathname;
+        let redirectTo = from;
+        
+        // If no specific destination, redirect to role-based dashboard
+        if (!from || from === '/dashboard') {
+          redirectTo = getDashboardRoute(result.user.roles);
+        }
+        
+        navigate(redirectTo, { replace: true });
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -46,14 +70,14 @@ const Login = () => {
         <div>
           <div className="flex justify-center">
             <div className="w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">E</span>
+              <span className="text-white font-bold text-2xl">P</span>
             </div>
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold text-gray-900">
-            Welcome back
+            {t('auth.welcomeBack')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your EcoEvents account
+            {t('auth.signInToAccount')}
           </p>
         </div>
 
@@ -61,7 +85,7 @@ const Login = () => {
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+                {t('auth.email')}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -76,14 +100,14 @@ const Login = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="input-field pl-10"
-                  placeholder="Enter your email"
+                  placeholder={t('auth.enterEmail')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                {t('auth.password')}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -98,7 +122,7 @@ const Login = () => {
                   value={formData.password}
                   onChange={handleChange}
                   className="input-field pl-10 pr-10"
-                  placeholder="Enter your password"
+                  placeholder={t('auth.enterPassword')}
                 />
                 <button
                   type="button"
@@ -124,19 +148,19 @@ const Login = () => {
               {loading ? (
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
               ) : (
-                'Sign in'
+                t('auth.login')
               )}
             </button>
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              {t('auth.dontHaveAccount')}{' '}
               <Link
                 to="/signup"
                 className="font-medium text-primary-600 hover:text-primary-500 transition-colors duration-200"
               >
-                Sign up
+                {t('auth.signup')}
               </Link>
             </p>
           </div>

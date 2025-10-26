@@ -3,6 +3,7 @@ import { Store, MapPin, Star, MessageCircle, Phone, Mail, Search, Filter } from 
 import { useAuth } from '../../contexts/AuthContext';
 import { usersAPI } from '../../services/api';
 import { formatDistance } from '../../utils/helpers';
+import ChatButton from '../../components/ChatButton';
 import toast from 'react-hot-toast';
 
 const FindVendors = () => {
@@ -194,25 +195,36 @@ const FindVendors = () => {
                   )}
                 </div>
 
-                <div className="flex space-x-2 mt-4">
-                  {vendor.phone && (
-                    <button
-                      onClick={() => handleCallVendor(vendor.phone)}
-                      className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center justify-center space-x-1"
-                    >
-                      <Phone className="w-4 h-4" />
-                      <span>Call</span>
-                    </button>
-                  )}
-                  {vendor.email && (
-                    <button
-                      onClick={() => handleEmailVendor(vendor.email)}
-                      className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center space-x-1"
-                    >
-                      <Mail className="w-4 h-4" />
-                      <span>Email</span>
-                    </button>
-                  )}
+                <div className="flex flex-col space-y-2 mt-4">
+                  {/* Chat Button - Primary Action */}
+                  <ChatButton
+                    targetUserId={vendor._id}
+                    targetUserName={vendor.name}
+                    targetUserRole="vendor"
+                    className="w-full"
+                  />
+                  
+                  {/* Secondary Actions */}
+                  <div className="flex space-x-2">
+                    {vendor.phone && (
+                      <button
+                        onClick={() => handleCallVendor(vendor.phone)}
+                        className="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm flex items-center justify-center space-x-1"
+                      >
+                        <Phone className="w-4 h-4" />
+                        <span>Call</span>
+                      </button>
+                    )}
+                    {vendor.email && (
+                      <button
+                        onClick={() => handleEmailVendor(vendor.email)}
+                        className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm flex items-center justify-center space-x-1"
+                      >
+                        <Mail className="w-4 h-4" />
+                        <span>Email</span>
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

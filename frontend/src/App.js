@@ -2,9 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './contexts/AuthContext';
-import { SocketProvider } from './contexts/SocketContext';
+import { StreamChatProvider } from './contexts/StreamChatContext';
+import './i18n';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
+import DashboardRedirect from './components/DashboardRedirect';
 
 // Auth pages
 import Login from './pages/auth/Login';
@@ -15,12 +17,15 @@ import CustomerDashboard from './pages/dashboard/CustomerDashboard';
 import VendorDashboard from './pages/dashboard/VendorDashboard';
 import NGODashboard from './pages/dashboard/NGODashboard';
 
+// Chat pages
+import Chat from './pages/Chat';
+import VendorChat from './pages/VendorChat';
+
 // Customer pages
 import SearchProducts from './pages/customer/SearchProducts';
 import FindVendors from './pages/customer/FindVendors';
 import FindNGOs from './pages/customer/FindNGOs';
 import Leaderboard from './pages/customer/Leaderboard';
-import Chat from './pages/customer/Chat';
 
 // Vendor pages
 import MyProducts from './pages/vendor/MyProducts';
@@ -28,7 +33,6 @@ import AddProduct from './pages/vendor/AddProduct';
 import CreateDonation from './pages/vendor/CreateDonation';
 import MyDonations from './pages/vendor/MyDonations';
 import MyStats from './pages/vendor/MyStats';
-import VendorChat from './pages/vendor/VendorChat';
 
 // NGO pages
 import AvailableDonations from './pages/ngo/AvailableDonations';
@@ -39,8 +43,13 @@ import NGOLeaderboard from './pages/ngo/NGOLeaderboard';
 function App() {
   return (
     <AuthProvider>
-      <SocketProvider>
-        <Router>
+      <StreamChatProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
           <div className="App">
             <Toaster 
               position="top-right"
@@ -79,7 +88,7 @@ function App() {
                 </ProtectedRoute>
               }>
                 {/* Dashboard routes */}
-                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route index element={<DashboardRedirect />} />
                 <Route path="dashboard" element={<CustomerDashboard />} />
                 <Route path="vendor-dashboard" element={<VendorDashboard />} />
                 <Route path="ngo-dashboard" element={<NGODashboard />} />
@@ -90,6 +99,7 @@ function App() {
                 <Route path="find-ngos" element={<FindNGOs />} />
                 <Route path="leaderboard" element={<Leaderboard />} />
                 <Route path="chat" element={<Chat />} />
+                <Route path="vendor-chat" element={<VendorChat />} />
                 
                 {/* Vendor routes */}
                 <Route path="my-products" element={<MyProducts />} />
@@ -111,7 +121,7 @@ function App() {
             </Routes>
           </div>
         </Router>
-      </SocketProvider>
+      </StreamChatProvider>
     </AuthProvider>
   );
 }

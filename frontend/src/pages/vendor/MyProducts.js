@@ -177,8 +177,12 @@ const MyProducts = () => {
                       alt={product.name}
                       className="w-full h-48 object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        if (e.target) {
+                          e.target.style.display = 'none';
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }
                       }}
                     />
                     <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center" style={{display: 'none'}}>

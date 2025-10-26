@@ -82,8 +82,12 @@ const DonationHistory = () => {
                       alt={donation.title}
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'flex';
+                        if (e.target) {
+                          e.target.style.display = 'none';
+                          if (e.target.nextSibling) {
+                            e.target.nextSibling.style.display = 'flex';
+                          }
+                        }
                       }}
                     />
                   ) : (
