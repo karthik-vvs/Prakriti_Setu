@@ -22,7 +22,7 @@ const FindVendors = () => {
         limit: 50
       };
 
-      // Add location if user has it
+      // Add location if the user has it
       if (user?.location) {
         params.latitude = user.location.coordinates[1];
         params.longitude = user.location.coordinates[0];
