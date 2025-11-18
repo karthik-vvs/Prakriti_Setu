@@ -23,6 +23,7 @@ const FindVendors = () => {
       };
 
       // Add location if the user has it
+      // For searching nearest ones 
       if (user?.location) {
         params.latitude = user.location.coordinates[1];
         params.longitude = user.location.coordinates[0];
